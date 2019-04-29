@@ -79,14 +79,10 @@ public class MusicService extends MediaBrowserServiceCompat {
 
     @Override
     public void onDestroy() {
-        if (IS_ATTEMPT) {
-            Log.d(TAG, "onDestroy: attempt to let notification still visible");
-        } else {
-            mMediaNotificationManager.onDestroy();
-            mPlayback.stop();
-            mSession.release();
-            Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
-        }
+        mMediaNotificationManager.onDestroy();
+        mPlayback.stop();
+        mSession.release();
+        Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
     }
 
     @Override
