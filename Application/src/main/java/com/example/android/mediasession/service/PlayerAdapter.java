@@ -98,17 +98,17 @@ public abstract class PlayerAdapter {
      */
     protected abstract void onPause();
 
-    public final void stop() {
+    public final void stop(boolean isDestroy) {
         mAudioFocusHelper.abandonAudioFocus();
         unregisterAudioNoisyReceiver();
-        onStop();
+        onStop(isDestroy);
     }
 
     /**
      * Called when the media must be stopped. The player should clean up resources at this
      * point.
      */
-    protected abstract void onStop();
+    protected abstract void onStop(boolean isDestroy);
 
     public abstract void seekTo(long position);
 
@@ -168,7 +168,7 @@ public abstract class PlayerAdapter {
                 case AudioManager.AUDIOFOCUS_LOSS:
                     mAudioManager.abandonAudioFocus(this);
                     mPlayOnAudioFocus = false;
-                    stop();
+                    stop(false);
                     break;
             }
         }

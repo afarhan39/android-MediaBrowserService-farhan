@@ -144,27 +144,23 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     }
 
     @Override
-    public void onStop() {
+    public void onStop(boolean isDestroy) {
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
         // be updated, so that MediaNotificationManager can take down the notification.
 
-        if (IS_ATTEMPT) {
+        if (IS_ATTEMPT && !isDestroy) {
             Log.d(TAG, "onStop: attempt to not release, and set to pause instead");
             if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 setNewState(PlaybackStateCompat.STATE_PAUSED);
+                return;
             }
 
-        } else {
-            Log.d(TAG, "onStop: ");
-            setNewState(PlaybackStateCompat.STATE_STOPPED);
-            release();
         }
 
-
-
-
-
+        Log.d(TAG, "onStop: ");
+        setNewState(PlaybackStateCompat.STATE_STOPPED);
+        release();
     }
 
     private void release() {

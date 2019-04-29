@@ -80,7 +80,7 @@ public class MusicService extends MediaBrowserServiceCompat {
     @Override
     public void onDestroy() {
         mMediaNotificationManager.onDestroy();
-        mPlayback.stop();
+        mPlayback.stop(true);
         mSession.release();
         Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
     }
@@ -157,11 +157,10 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onStop() {
-            mPlayback.stop();
+            mPlayback.stop(false);
             mSession.setActive(false);
 
-
-//            Log.d(TAG, "onStop: ");
+            Log.d(TAG, "onStop: ");
         }
 
         @Override
