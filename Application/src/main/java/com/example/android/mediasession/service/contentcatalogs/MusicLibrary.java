@@ -35,6 +35,9 @@ import java.util.concurrent.TimeUnit;
 
 public class MusicLibrary {
 
+    private static final String TAG = "YIKES " + MusicLibrary.class.getSimpleName();
+
+
     private static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     private static final HashMap<String, Integer> albumRes = new HashMap<>();
     private static final HashMap<String, String> musicFileName = new HashMap<>();
@@ -138,7 +141,7 @@ public class MusicLibrary {
                         .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album)
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
-                                 TimeUnit.MILLISECONDS.convert(duration, durationUnit))
+                                TimeUnit.MILLISECONDS.convert(duration, durationUnit))
                         .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
                         .putString(
                                 MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,

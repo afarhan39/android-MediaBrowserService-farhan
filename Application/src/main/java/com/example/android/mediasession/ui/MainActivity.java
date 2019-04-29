@@ -25,6 +25,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -38,6 +39,9 @@ import com.example.android.mediasession.service.contentcatalogs.MusicLibrary;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "YIKES " + MainActivity.class.getSimpleName();
+
 
     private ImageView mAlbumArt;
     private TextView mTitleTextView;
@@ -94,16 +98,20 @@ public class MainActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.button_previous:
                     mMediaBrowserHelper.getTransportControls().skipToPrevious();
+                    Log.d(TAG, "onClick: previous");
                     break;
                 case R.id.button_play:
                     if (mIsPlaying) {
                         mMediaBrowserHelper.getTransportControls().pause();
+                        Log.d(TAG, "onClick: pause");
                     } else {
                         mMediaBrowserHelper.getTransportControls().play();
+                        Log.d(TAG, "onClick: play");
                     }
                     break;
                 case R.id.button_next:
                     mMediaBrowserHelper.getTransportControls().skipToNext();
+                    Log.d(TAG, "onClick: next");
                     break;
             }
         }

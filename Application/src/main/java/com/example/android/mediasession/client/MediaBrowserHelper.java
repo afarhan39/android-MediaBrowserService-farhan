@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class MediaBrowserHelper {
 
-    private static final String TAG = MediaBrowserHelper.class.getSimpleName();
+    private static final String TAG = "YIKES " + MediaBrowserHelper.class.getSimpleName();
 
     private final Context mContext;
     private final Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass;
@@ -125,6 +125,8 @@ public class MediaBrowserHelper {
         if (mMediaController == null) {
             throw new IllegalStateException("MediaController is null!");
         }
+
+        Log.d(TAG, "getMediaController: ");
         return mMediaController;
     }
 
@@ -167,6 +169,8 @@ public class MediaBrowserHelper {
                 }
             }
         }
+
+        Log.d(TAG, "registerCallback: ");
     }
 
     private void performOnAllCallbacks(@NonNull CallbackCommand command) {
@@ -255,6 +259,8 @@ public class MediaBrowserHelper {
             onPlaybackStateChanged(null);
 
             MediaBrowserHelper.this.onDisconnected();
+
+            Log.d(TAG, "onSessionDestroyed: ");
         }
     }
 }

@@ -38,7 +38,8 @@ import java.util.List;
 
 public class MusicService extends MediaBrowserServiceCompat {
 
-    private static final String TAG = MusicService.class.getSimpleName();
+    private static final String TAG = "YIKES " + MusicService.class.getSimpleName();
+
 
     private MediaSessionCompat mSession;
     private PlayerAdapter mPlayback;
@@ -56,8 +57,8 @@ public class MusicService extends MediaBrowserServiceCompat {
         mSession.setCallback(mCallback);
         mSession.setFlags(
                 MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_QUEUE_COMMANDS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+                        MediaSessionCompat.FLAG_HANDLES_QUEUE_COMMANDS |
+                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         setSessionToken(mSession.getSessionToken());
 
         mMediaNotificationManager = new MediaNotificationManager(this);
@@ -70,6 +71,8 @@ public class MusicService extends MediaBrowserServiceCompat {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         stopSelf();
+
+        Log.d(TAG, "onTaskRemoved: ");
     }
 
     @Override
@@ -78,6 +81,9 @@ public class MusicService extends MediaBrowserServiceCompat {
         mPlayback.stop();
         mSession.release();
         Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
+
+
+//        Log.d(TAG, "onDestroy: attempt to let notification still visible");
     }
 
     @Override
@@ -154,6 +160,9 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onStop() {
             mPlayback.stop();
             mSession.setActive(false);
+
+
+//            Log.d(TAG, "onStop: ");
         }
 
         @Override
@@ -191,6 +200,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPlaybackStateChange(PlaybackStateCompat state) {
+            Log.d(TAG, "onPlaybackStateChange: ");
             // Report the state to the MediaSession.
             mSession.setPlaybackState(state);
 
@@ -235,9 +245,13 @@ public class MusicService extends MediaBrowserServiceCompat {
             }
 
             private void moveServiceOutOfStartedState(PlaybackStateCompat state) {
+                Log.d(TAG, "moveServiceOutofStartedState: ");
                 stopForeground(true);
                 stopSelf();
                 mServiceInStartedState = false;
+
+//                Log.d(TAG, "moveServiceOutOfStartedState: attempt to not removing notf");
+//                stopForeground(false);
             }
         }
 

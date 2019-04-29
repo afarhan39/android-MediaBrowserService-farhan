@@ -32,6 +32,9 @@ import android.support.v4.media.session.PlaybackStateCompat;
  */
 public abstract class PlayerAdapter {
 
+    private static final String TAG = "YIKES " + PlayerAdapter.class.getSimpleName();
+
+
     private static final float MEDIA_VOLUME_DEFAULT = 1.0f;
     private static final float MEDIA_VOLUME_DUCK = 0.2f;
 

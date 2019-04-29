@@ -24,6 +24,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.SeekBar;
 
@@ -33,6 +34,10 @@ import android.widget.SeekBar;
  */
 
 public class MediaSeekBar extends AppCompatSeekBar {
+
+    private static final String TAG = "YIKES " + MediaSeekBar.class.getSimpleName();
+
+
     private MediaControllerCompat mMediaController;
     private ControllerCallback mControllerCallback;
 
@@ -49,6 +54,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            Log.d(TAG, "onStopTrackingTouch: seekTo");
             mMediaController.getTransportControls().seekTo(getProgress());
             mIsTracking = false;
         }

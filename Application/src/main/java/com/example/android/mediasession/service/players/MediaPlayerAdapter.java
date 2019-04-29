@@ -35,6 +35,9 @@ import com.example.android.mediasession.ui.MainActivity;
  */
 public final class MediaPlayerAdapter extends PlayerAdapter {
 
+    private static final String TAG = "YIKES " + MediaPlayerAdapter.class.getSimpleName();
+
+
     private final Context mContext;
     private MediaPlayer mMediaPlayer;
     private String mFilename;
@@ -77,6 +80,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                 }
             });
         }
+
+        Log.d(TAG, "initializeMediaPlayer: ");
     }
 
     // Implements PlaybackControl.
@@ -85,6 +90,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         mCurrentMedia = metadata;
         final String mediaId = metadata.getDescription().getMediaId();
         playFile(MusicLibrary.getMusicFilename(mediaId));
+
+        Log.d(TAG, "playFromMedia: ");
     }
 
     @Override
@@ -107,6 +114,10 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             return;
         } else {
             release();
+
+//            Log.d(TAG, "playFile: attempt to not release");
+//            pause();
+
         }
 
         mFilename = filename;
@@ -130,17 +141,29 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         }
 
         play();
+
+        Log.d(TAG, "playFile: ");
     }
 
     @Override
     public void onStop() {
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
         // be updated, so that MediaNotificationManager can take down the notification.
+
+        Log.d(TAG, "onStop: ");
         setNewState(PlaybackStateCompat.STATE_STOPPED);
         release();
+
+//        Log.d(TAG, "onStop: attempt to not release, and set to pause instead");
+//        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+//            mMediaPlayer.pause();
+//            setNewState(PlaybackStateCompat.STATE_PAUSED);
+//        }
+
     }
 
     private void release() {
+        Log.d(TAG, "release: ");
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -154,6 +177,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
     @Override
     protected void onPlay() {
+        Log.d(TAG, "onPlay: ");
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setNewState(PlaybackStateCompat.STATE_PLAYING);
@@ -162,6 +186,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause: ");
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setNewState(PlaybackStateCompat.STATE_PAUSED);
@@ -170,6 +195,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
     // This is the main reducer for the player state machine.
     private void setNewState(@PlaybackStateCompat.State int newPlayerState) {
+        Log.d(TAG, "setNewState: ");
         mState = newPlayerState;
 
         // Whether playback goes to completion, or whether it is stopped, the
@@ -193,9 +219,9 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         final PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
         stateBuilder.setActions(getAvailableActions());
         stateBuilder.setState(mState,
-                              reportPosition,
-                              1.0f,
-                              SystemClock.elapsedRealtime());
+                reportPosition,
+                1.0f,
+                SystemClock.elapsedRealtime());
         mPlaybackInfoListener.onPlaybackStateChange(stateBuilder.build());
     }
 
@@ -208,34 +234,35 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     @PlaybackStateCompat.Actions
     private long getAvailableActions() {
         long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
-                       | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
-                       | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-                       | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
+                | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
+                | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState) {
             case PlaybackStateCompat.STATE_STOPPED:
                 actions |= PlaybackStateCompat.ACTION_PLAY
-                           | PlaybackStateCompat.ACTION_PAUSE;
+                        | PlaybackStateCompat.ACTION_PAUSE;
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 actions |= PlaybackStateCompat.ACTION_STOP
-                           | PlaybackStateCompat.ACTION_PAUSE
-                           | PlaybackStateCompat.ACTION_SEEK_TO;
+                        | PlaybackStateCompat.ACTION_PAUSE
+                        | PlaybackStateCompat.ACTION_SEEK_TO;
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 actions |= PlaybackStateCompat.ACTION_PLAY
-                           | PlaybackStateCompat.ACTION_STOP;
+                        | PlaybackStateCompat.ACTION_STOP;
                 break;
             default:
                 actions |= PlaybackStateCompat.ACTION_PLAY
-                           | PlaybackStateCompat.ACTION_PLAY_PAUSE
-                           | PlaybackStateCompat.ACTION_STOP
-                           | PlaybackStateCompat.ACTION_PAUSE;
+                        | PlaybackStateCompat.ACTION_PLAY_PAUSE
+                        | PlaybackStateCompat.ACTION_STOP
+                        | PlaybackStateCompat.ACTION_PAUSE;
         }
         return actions;
     }
 
     @Override
     public void seekTo(long position) {
+        Log.d(TAG, "seekTo: ");
         if (mMediaPlayer != null) {
             if (!mMediaPlayer.isPlaying()) {
                 mSeekWhileNotPlaying = (int) position;
@@ -250,6 +277,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
     @Override
     public void setVolume(float volume) {
+        Log.d(TAG, "setVolume: ");
         if (mMediaPlayer != null) {
             mMediaPlayer.setVolume(volume, volume);
         }

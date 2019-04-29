@@ -52,7 +52,8 @@ public class MediaNotificationManager {
 
     public static final int NOTIFICATION_ID = 412;
 
-    private static final String TAG = MediaNotificationManager.class.getSimpleName();
+    private static final String TAG = "YIKES " + MediaNotificationManager.class.getSimpleName();
+
     private static final String CHANNEL_ID = "com.example.android.musicplayer.channel";
     private static final int REQUEST_CODE = 501;
 
@@ -115,6 +116,8 @@ public class MediaNotificationManager {
     public Notification getNotification(MediaMetadataCompat metadata,
                                         @NonNull PlaybackStateCompat state,
                                         MediaSessionCompat.Token token) {
+        Log.d(TAG, "getNotification: ");
+
         boolean isPlaying = state.getState() == PlaybackStateCompat.STATE_PLAYING;
         MediaDescriptionCompat description = metadata.getDescription();
         NotificationCompat.Builder builder =
@@ -126,6 +129,8 @@ public class MediaNotificationManager {
                                                          MediaSessionCompat.Token token,
                                                          boolean isPlaying,
                                                          MediaDescriptionCompat description) {
+
+        Log.d(TAG, "buildNotification: ");
 
         // Create the (mandatory) notification channel when running on Android Oreo.
         if (isAndroidOOrHigher()) {
