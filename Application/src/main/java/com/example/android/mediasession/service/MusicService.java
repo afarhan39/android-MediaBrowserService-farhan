@@ -36,6 +36,8 @@ import com.example.android.mediasession.service.players.MediaPlayerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.android.mediasession.Config.IS_ATTEMPT;
+
 public class MusicService extends MediaBrowserServiceCompat {
 
     private static final String TAG = "YIKES " + MusicService.class.getSimpleName();
@@ -77,13 +79,14 @@ public class MusicService extends MediaBrowserServiceCompat {
 
     @Override
     public void onDestroy() {
-        mMediaNotificationManager.onDestroy();
-        mPlayback.stop();
-        mSession.release();
-        Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
-
-
-//        Log.d(TAG, "onDestroy: attempt to let notification still visible");
+        if (IS_ATTEMPT) {
+            Log.d(TAG, "onDestroy: attempt to let notification still visible");
+        } else {
+            mMediaNotificationManager.onDestroy();
+            mPlayback.stop();
+            mSession.release();
+            Log.d(TAG, "onDestroy: MediaPlayerAdapter stopped, and MediaSession released");
+        }
     }
 
     @Override
@@ -245,13 +248,15 @@ public class MusicService extends MediaBrowserServiceCompat {
             }
 
             private void moveServiceOutOfStartedState(PlaybackStateCompat state) {
-                Log.d(TAG, "moveServiceOutofStartedState: ");
-                stopForeground(true);
-                stopSelf();
-                mServiceInStartedState = false;
-
-//                Log.d(TAG, "moveServiceOutOfStartedState: attempt to not removing notf");
-//                stopForeground(false);
+                if (IS_ATTEMPT) {
+                    Log.d(TAG, "moveServiceOutOfStartedState: attempt to not removing notf");
+                    stopForeground(false);
+                } else {
+                    Log.d(TAG, "moveServiceOutofStartedState: ");
+                    stopForeground(true);
+                    stopSelf();
+                    mServiceInStartedState = false;
+                }
             }
         }
 

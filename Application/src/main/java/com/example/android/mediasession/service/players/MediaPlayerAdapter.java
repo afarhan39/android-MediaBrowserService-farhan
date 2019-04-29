@@ -29,6 +29,8 @@ import com.example.android.mediasession.service.PlayerAdapter;
 import com.example.android.mediasession.service.contentcatalogs.MusicLibrary;
 import com.example.android.mediasession.ui.MainActivity;
 
+import static com.example.android.mediasession.Config.IS_ATTEMPT;
+
 /**
  * Exposes the functionality of the {@link MediaPlayer} and implements the {@link PlayerAdapter}
  * so that {@link MainActivity} can control music playback.
@@ -114,10 +116,6 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             return;
         } else {
             release();
-
-//            Log.d(TAG, "playFile: attempt to not release");
-//            pause();
-
         }
 
         mFilename = filename;
@@ -150,15 +148,22 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
         // be updated, so that MediaNotificationManager can take down the notification.
 
-        Log.d(TAG, "onStop: ");
-        setNewState(PlaybackStateCompat.STATE_STOPPED);
-        release();
+        if (IS_ATTEMPT) {
+            Log.d(TAG, "onStop: attempt to not release, and set to pause instead");
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+                setNewState(PlaybackStateCompat.STATE_PAUSED);
+            }
 
-//        Log.d(TAG, "onStop: attempt to not release, and set to pause instead");
-//        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-//            mMediaPlayer.pause();
-//            setNewState(PlaybackStateCompat.STATE_PAUSED);
-//        }
+        } else {
+            Log.d(TAG, "onStop: ");
+            setNewState(PlaybackStateCompat.STATE_STOPPED);
+            release();
+        }
+
+
+
+
 
     }
 
