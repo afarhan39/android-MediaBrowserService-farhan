@@ -17,6 +17,7 @@
 package com.example.android.mediasession.ui;
 
 import android.content.Context;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
@@ -36,6 +37,7 @@ import com.example.android.mediasession.client.MediaBrowserHelper;
 import com.example.android.mediasession.service.MusicService;
 import com.example.android.mediasession.service.contentcatalogs.MusicLibrary;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,6 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
         mMediaBrowserHelper = new MediaBrowserConnection(this);
         mMediaBrowserHelper.registerCallback(new MediaBrowserListener());
+
+
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        mmr.setDataSource("https://cdn.thestar.com.my/Content/Audio/short-with-headline/{A3C48A99-2CA9-48B4-AC91-688106A85C2E}_v1.mp3", new HashMap<String, String>());
+
+        String duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);// to get album nam
     }
 
     @Override
