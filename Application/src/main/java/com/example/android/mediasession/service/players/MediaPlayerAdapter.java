@@ -18,7 +18,9 @@ package com.example.android.mediasession.service.players;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -30,6 +32,7 @@ import com.example.android.mediasession.service.contentcatalogs.MusicLibrary;
 import com.example.android.mediasession.ui.MainActivity;
 
 import static com.example.android.mediasession.Config.IS_ATTEMPT;
+import static com.example.android.mediasession.Config.IS_LOCAL_FILE;
 
 /**
  * Exposes the functionality of the {@link MediaPlayer} and implements the {@link PlayerAdapter}
@@ -89,9 +92,16 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
     // Implements PlaybackControl.
     @Override
     public void playFromMedia(MediaMetadataCompat metadata) {
+        Log.d(TAG, "initializeMediaPlayer: ");
         mCurrentMedia = metadata;
         final String mediaId = metadata.getDescription().getMediaId();
-        playFile(MusicLibrary.getMusicFilename(mediaId));
+
+        if (IS_LOCAL_FILE) {
+            playFile(MusicLibrary.getMusicFilename(mediaId));
+        } else {
+            streamAudio(MusicLibrary.getMusicFilename(mediaId));
+
+        }
 
         Log.d(TAG, "playFromMedia: ");
     }
@@ -141,6 +151,55 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
         play();
 
         Log.d(TAG, "playFile: ");
+    }
+
+    private void streamAudio(String url) {
+        boolean mediaChanged = (mFilename == null || !url.equals(mFilename));
+        if (mCurrentMediaPlayedToCompletion) {
+            // Last audio file was played to completion, the resourceId hasn't changed, but the
+            // player was released, so force a reload of the media file for playback.
+            mediaChanged = true;
+            mCurrentMediaPlayedToCompletion = false;
+        }
+        if (!mediaChanged) {
+            if (!isPlaying()) {
+                play();
+            }
+            return;
+        } else {
+            release();
+        }
+
+        mFilename = url;
+
+        initializeMediaPlayer();
+
+
+        try {
+            mMediaPlayer.setDataSource(mContext, Uri.parse(mFilename));
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+            Log.d(TAG, "try: stream url");
+
+        } catch (Exception e) {
+            Log.d(TAG, "catch: stream url");
+
+            throw new RuntimeException("Failed to stream url: " + mFilename, e);
+        }
+
+        try {
+            mMediaPlayer.prepare();
+            Log.d(TAG, "try: prepare url");
+
+        } catch (Exception e) {
+            Log.d(TAG, "catch: stream url");
+
+            throw new RuntimeException("Failed to stream url: " + mFilename, e);
+        }
+
+        play();
+
+        Log.d(TAG, "streamUrl: ");
     }
 
     @Override

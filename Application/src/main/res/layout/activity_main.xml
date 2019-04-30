@@ -20,15 +20,15 @@
                                              xmlns:tools="http://schemas.android.com/tools"
                                              android:id="@+id/frameLayout"
                                              android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             tools:background="@drawable/album_jazz_blues">
+                                             android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/album_art"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        tools:ignore="ContentDescription" />
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription"
+        tools:background="@drawable/album_thestar"/>
 
     <View
         android:layout_width="match_parent"

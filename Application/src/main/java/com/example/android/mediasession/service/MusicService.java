@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.android.mediasession.Config.IS_ATTEMPT;
+import static com.example.android.mediasession.Config.IS_LOCAL_FILE;
 
 public class MusicService extends MediaBrowserServiceCompat {
 
@@ -89,6 +90,7 @@ public class MusicService extends MediaBrowserServiceCompat {
     public BrowserRoot onGetRoot(@NonNull String clientPackageName,
                                  int clientUid,
                                  Bundle rootHints) {
+        Log.d(TAG, "onGetRoot: ");
         return new BrowserRoot(MusicLibrary.getRoot(), null);
     }
 
@@ -96,6 +98,7 @@ public class MusicService extends MediaBrowserServiceCompat {
     public void onLoadChildren(
             @NonNull final String parentMediaId,
             @NonNull final Result<List<MediaBrowserCompat.MediaItem>> result) {
+        Log.d(TAG, "onLoadChildren: ");
         result.sendResult(MusicLibrary.getMediaItems());
     }
 
@@ -107,6 +110,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
+            Log.d(TAG, "onAddQueueItem: ");
             mPlaylist.add(new MediaSessionCompat.QueueItem(description, description.hashCode()));
             mQueueIndex = (mQueueIndex == -1) ? 0 : mQueueIndex;
             mSession.setQueue(mPlaylist);
@@ -114,6 +118,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
+            Log.d(TAG, "onRemoveQueueItem: ");
             mPlaylist.remove(new MediaSessionCompat.QueueItem(description, description.hashCode()));
             mQueueIndex = (mPlaylist.isEmpty()) ? -1 : mQueueIndex;
             mSession.setQueue(mPlaylist);
@@ -121,13 +126,21 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPrepare() {
+            Log.d(TAG, "onPrepare: ");
             if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
                 // Nothing to play.
                 return;
             }
 
             final String mediaId = mPlaylist.get(mQueueIndex).getDescription().getMediaId();
-            mPreparedMedia = MusicLibrary.getMetadata(MusicService.this, mediaId);
+            Log.d(TAG, "onPrepare: mediaId " + mediaId);
+
+            if (IS_LOCAL_FILE) {
+                mPreparedMedia = MusicLibrary.getMetadata(MusicService.this, mediaId);
+            } else {
+                mPreparedMedia = MusicLibrary.getMetadataWithUri(MusicService.this, mediaId);
+            }
+
             mSession.setMetadata(mPreparedMedia);
 
             if (!mSession.isActive()) {
@@ -137,6 +150,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPlay() {
+            Log.d(TAG, "onPlay: ");
             if (!isReadyToPlay()) {
                 // Nothing to play.
                 return;
@@ -183,6 +197,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         }
 
         private boolean isReadyToPlay() {
+            Log.d(TAG, "isReadyToPlay: ");
             return (!mPlaylist.isEmpty());
         }
     }
