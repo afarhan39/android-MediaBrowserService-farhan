@@ -74,6 +74,8 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    Log.d(TAG, "initializeMediaPlayer: onCompletion");
+
                     mPlaybackInfoListener.onPlaybackCompleted();
 
                     // Set the state to "paused" because it most closely matches the state
@@ -81,7 +83,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
                     // to "stop".
                     // Paused allows: seekTo(), start(), pause(), stop()
                     // Stop allows: stop()
-                    setNewState(PlaybackStateCompat.STATE_PAUSED);
+                    // setNewState(PlaybackStateCompat.STATE_PAUSED);
                 }
             });
         }
@@ -255,7 +257,7 @@ public final class MediaPlayerAdapter extends PlayerAdapter {
 
     // This is the main reducer for the player state machine.
     private void setNewState(@PlaybackStateCompat.State int newPlayerState) {
-        Log.d(TAG, "setNewState: ");
+        Log.d(TAG, "setNewState: " + newPlayerState);
         mState = newPlayerState;
 
         // Whether playback goes to completion, or whether it is stopped, the

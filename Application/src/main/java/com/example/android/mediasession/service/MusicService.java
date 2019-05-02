@@ -66,7 +66,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         mMediaNotificationManager = new MediaNotificationManager(this);
 
-        mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
+        mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener(this));
         Log.d(TAG, "onCreate: MusicService creating MediaSession, and MediaNotificationManager");
     }
 
@@ -179,6 +179,7 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onSkipToNext() {
+            Log.d(TAG, "onSkipToNext: ");
             mQueueIndex = (++mQueueIndex % mPlaylist.size());
             mPreparedMedia = null;
             onPlay();
@@ -206,9 +207,11 @@ public class MusicService extends MediaBrowserServiceCompat {
     public class MediaPlayerListener extends PlaybackInfoListener {
 
         private final ServiceManager mServiceManager;
+        private final MusicService musicService;
 
-        MediaPlayerListener() {
+        MediaPlayerListener(MusicService musicService) {
             mServiceManager = new ServiceManager();
+            this.musicService = musicService;
         }
 
         @Override
@@ -229,6 +232,13 @@ public class MusicService extends MediaBrowserServiceCompat {
                     mServiceManager.moveServiceOutOfStartedState(state);
                     break;
             }
+        }
+
+        @Override
+        public void onPlaybackCompleted() {
+            super.onPlaybackCompleted();
+            Log.d(TAG, "onPlaybackCompleted: ");
+            musicService.mCallback.onSkipToNext();
         }
 
         class ServiceManager {
